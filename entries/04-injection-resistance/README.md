@@ -145,6 +145,7 @@ The practices and their sources are kept in one place for the whole portfolio, i
 - **[P-03](../../RECOMMENDED-APPROACHES.md#p-03) Keep untrusted content structurally apart: partly applied.** The request sits in `<request>` tags; JSON encoding and tool-result delivery are not used yet.
 - **[P-01](../../RECOMMENDED-APPROACHES.md#p-01) and [P-02](../../RECOMMENDED-APPROACHES.md#p-02) Small authority, validated format: applied by design.** The model only routes, and the schema leaves no field for an approval or an amount.
 - **[P-09](../../RECOMMENDED-APPROACHES.md#p-09) Test adversarially: one round.** The attacks never broke the model.
+- **[P-11](../../RECOMMENDED-APPROACHES.md#p-11) Report uncertainty: not yet applied.** Each injection and its twin are a related pair, which a clustered analysis would treat as one group.
 
 A plain-language version for a non-technical team is in the same file, and in the wiki's [Prompt injection](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-injection.html) entry.
 

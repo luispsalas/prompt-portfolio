@@ -67,7 +67,7 @@ What the entries have taught so far, each with the entry that shows it. Lessons 
 
 [RECOMMENDED-APPROACHES.md](RECOMMENDED-APPROACHES.md) collects what current published guidance recommends for the problems in this portfolio, each practice cited to its primary source, and says where each entry stands against it. It is kept as one living synthesis: when a new source or a new result disagrees with a practice, the practice is updated and the disagreement recorded, never added as a second opinion. Entries link to its practices by ID and keep their own evidence.
 
-Nine practices so far, in five groups: the model's authority (P-01), output format (P-02), untrusted input (P-03 to P-05), prompt content (P-06) and testing (P-07 to P-09). One records a disagreement: a defensive instruction that published guidance recommends added only false alarms in entry 04, and the file says how that was reconciled. It also has a plain-language summary for a non-technical team, and the events that should trigger a revisit.
+Eleven practices so far, in five groups: the model's authority (P-01), output format (P-02), untrusted input (P-03 to P-05), prompt content (P-06) and testing (P-07 to P-11). One records a disagreement: a defensive instruction that published guidance recommends added only false alarms in entry 04, and the file says how that was reconciled. It also has a plain-language summary for a non-technical team, and the events that should trigger a revisit.
 
 ## How the testing works
 

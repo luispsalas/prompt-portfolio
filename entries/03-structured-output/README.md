@@ -120,6 +120,7 @@ The practices and their sources are kept in one place for the whole portfolio, i
 - **[P-01](../../RECOMMENDED-APPROACHES.md#p-01) Keep the model's authority small: applied.** The schema forbids any field beyond the four, so a reply cannot carry an amount or an approval.
 - **[P-09](../../RECOMMENDED-APPROACHES.md#p-09) Test adversarially: one round, on the format only.** The 12 stress requests did not break either approach.
 - **[P-07](../../RECOMMENDED-APPROACHES.md#p-07) Set success criteria first: applied.** Pass marks were set before the runs, and one prompt-only run fell below them.
+- **[P-11](../../RECOMMENDED-APPROACHES.md#p-11) Report uncertainty, and compare on the same cases: partly applied.** The one-reply gap is stated as not significant, the repeated runs as not independent, and the needed sample size is estimated; no standard errors are reported yet.
 
 ## Reproduce
 

@@ -128,6 +128,7 @@ The practices and their sources are kept in one place for the whole portfolio, i
 - **[P-06](../../RECOMMENDED-APPROACHES.md#p-06) Write expert judgment as explicit rules, then test them: tested.** v2 added a reviewer's rules, not a persona. On unseen requests the urgency rules generalized (16 of 16 in every run), while the category definitions traded two fixes for two new errors.
 - **[P-07](../../RECOMMENDED-APPROACHES.md#p-07) Set success criteria first, and judge changes on unseen cases: applied.** Pass marks were set before any run, and 15 of 15 on the dev set did not transfer to the held-out set.
 - **[P-01](../../RECOMMENDED-APPROACHES.md#p-01) Keep the model's authority small: applied by design.** The model classifies; amounts and approvals stay with fixed rules.
+- **[P-10](../../RECOMMENDED-APPROACHES.md#p-10) Report results across prompt formats: observed, not yet tested.** Collapsing the prompt's line breaks changed one answer on Haiku 4.5.
 
 ## Reproduce
 
