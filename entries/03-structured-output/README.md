@@ -39,7 +39,7 @@ So the business requirement is not "the model returns JSON". It is: **nothing do
 
 ## How it works
 
-1. The model receives the request and replies.
+1. The model receives the request and replies. The prompt is entry 02's final version, unchanged: the system prompt [`system-v2.txt`](../02-intent-classification/system-v2.txt), with the request inserted into [`user.txt`](../02-intent-classification/user.txt).
 2. The **checker** ([`validator.py`](validator.py)) reads the reply. It strips a code fence if one is present (models add them), parses the JSON, and checks that the category and urgency are allowed values, the summary is not empty, and the injection flag is true or false.
 3. **Accepted:** the four fields are used. **Rejected:** the request goes to a person, with the reason (for example `reply is not valid JSON`).
 
