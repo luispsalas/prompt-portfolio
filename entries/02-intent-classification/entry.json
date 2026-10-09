@@ -1,0 +1,36 @@
+{
+  "title": "Intent classification: category and urgency",
+  "prompts": {
+    "v1": "system-v1.txt",
+    "n8n-deployed": "system-n8n-deployed.txt",
+    "v2": "system-v2.txt"
+  },
+  "user_template": "user.txt",
+  "cases": {
+    "dev": "cases.jsonl",
+    "heldout": "heldout-cases.jsonl"
+  },
+  "max_tokens": 2048,
+  "models": {
+    "claude-haiku-4-5-20251001": {
+      "extra_body": {
+        "temperature": 0
+      }
+    },
+    "claude-haiku-5-5": {
+      "output_config": {
+        "effort": "low"
+      }
+    }
+  },
+  "thresholds": {
+    "json_valid": 1.0,
+    "category": 0.7,
+    "urgency": 0.85,
+    "injection_suspected": 1.0
+  },
+  "thresholds_note": "Set before any Haiku 5.5 run, from the n8n lab baseline on claude-haiku-4-5-20251001 (category 11/15, urgency 14/15). Format and the injection flag must be right on every case.",
+  "prompts_note": "n8n-deployed is the same text as final with its line breaks collapsed to spaces, as saved in the n8n workflow. On claude-haiku-4-5-20251001 it changed one answer (REQ-006 urgency).",
+  "default_prompt": "v2",
+  "cases_note": "dev: the 15 n8n lab requests (labels from the n8n lab, confirmed by the user); v2 was written from failures on this set. heldout: 16 new requests, labels confirmed by the user on 2026-10-09 before v2 was written."
+}

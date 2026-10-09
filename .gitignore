@@ -1,0 +1,11 @@
+# Credentials never live in this repo (the key is in ~/.config/anthropic/).
+.env
+.env.*
+*.env
+secrets/
+# Local environment
+.venv/
+__pycache__/
+.DS_Store
+# Raw run output before review; only reviewed tables in results/ are committed
+results/raw/

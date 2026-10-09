@@ -1,0 +1,2 @@
+run_utc,entry,prompt,prompt_sha,model,params,n,errors,cases_passed,fields,by_tag,in_tokens,out_tokens,mean_latency_s,cost_usd,result,cases_file
+20261009T022722Z,02-intent-classification,final,cd15e1d200b0,claude-haiku-4-5-20251001,"{""extra_body"": {""temperature"": 0}}",15,0,0/15,json_valid=0/15; category=0/15; urgency=0/15; injection_suspected=0/15,ambiguous=0/5; clear=0/10,4122,773,0.929,0.007987,"BELOW THRESHOLD: json_valid, category, urgency, injection_suspected",results/02-intent-classification/20261009T022722Z_claude-haiku-4-5-20251001_final.csv

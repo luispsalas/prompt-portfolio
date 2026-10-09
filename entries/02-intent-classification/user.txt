@@ -1,0 +1,5 @@
+<request>
+Department: {{department}}
+Vendor: {{vendor}}
+Request text: {{text}}
+</request>
