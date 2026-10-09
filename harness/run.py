@@ -18,7 +18,9 @@ An API error is never counted as a model failure: the run is reported as incompl
 Each entry folder holds entry.json, its prompt files, cases.jsonl and score.py, where
 score(case, text) returns {"fields": {name: bool, ...}, "got": {...}} and optionally
 "observed": {name: bool} for things worth counting that are not pass conditions.
-A case passes when every field is True.
+A field may be None when it does not apply to a case (e.g. a check only for injection cases);
+its score and pass mark then count only the cases it applies to.
+A case passes when every applicable field is True.
 """
 import argparse, csv, hashlib, importlib.util, json, logging, sys, time
 from datetime import datetime, timezone
@@ -144,7 +146,7 @@ def run_entry(client, entry_dir, args, spent):
             tok_out += u.output_tokens
             latencies.append(row["latency_s"])
             result = score(case, text)
-            row.update({"pass": all(result["fields"].values()), "in_tokens": u.input_tokens,
+            row.update({"pass": all(v for v in result["fields"].values() if v is not None), "in_tokens": u.input_tokens,
                         "out_tokens": u.output_tokens})
             for f, ok in result["fields"].items():
                 row[f"ok_{f}"] = ok
@@ -161,7 +163,9 @@ def run_entry(client, entry_dir, args, spent):
     scored = [r for r in rows if "pass" in r]
     n = len(scored)
     field_names = [k[3:] for k in scored[0] if k.startswith("ok_")] if scored else []
-    acc = {f: sum(r[f"ok_{f}"] for r in scored) for f in field_names}
+    # (passed, applicable): a field is None on cases it does not apply to.
+    acc = {f: (sum(r[f"ok_{f}"] is True for r in scored), sum(r[f"ok_{f}"] is not None for r in scored))
+           for f in field_names}
     obs_names = sorted({k[4:] for r in scored for k in r if k.startswith("obs_")})
     tags = sorted({t for r in scored for t in r["tags"].split()})
     by_tag = {t: (sum(r["pass"] for r in scored if t in r["tags"].split()),
@@ -169,8 +173,8 @@ def run_entry(client, entry_dir, args, spent):
     # Pass marks apply to the fields this set scores (a set without category labels has no
     # category score). Marks for unscored fields are listed, never silently dropped.
     thresholds = cfg.get("thresholds", {})
-    not_scored = [f for f in thresholds if f not in acc]
-    short = [f for f, th in thresholds.items() if f in acc and (n == 0 or acc[f] / n < th)]
+    not_scored = [f for f in thresholds if f not in acc or acc[f][1] == 0]
+    short = [f for f, th in thresholds.items() if f not in not_scored and acc[f][0] / acc[f][1] < th]
     complete = errors == 0 and n == len(cases)
     met = complete and not short
 
@@ -185,7 +189,7 @@ def run_entry(client, entry_dir, args, spent):
         "run_utc": stamp, "entry": entry_dir.name, "set": set_name, "prompt": prompt_name, "prompt_sha": prompt_sha,
         "model": args.model, "params": json.dumps(params_label, sort_keys=True), "n": n, "errors": errors,
         "cases_passed": f"{sum(r['pass'] for r in scored)}/{n}",
-        "fields": "; ".join(f"{f}={acc[f]}/{n}" for f in field_names),
+        "fields": "; ".join(f"{f}={acc[f][0]}/{acc[f][1]}" for f in field_names),
         "observed": "; ".join(f"{o}={sum(bool(r.get('obs_' + o)) for r in scored)}/{n}" for o in obs_names),
         "by_tag": "; ".join(f"{t}={p}/{c}" for t, (p, c) in by_tag.items()),
         "in_tokens": tok_in, "out_tokens": tok_out,
