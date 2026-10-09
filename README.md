@@ -2,6 +2,15 @@
 
 **Prompts treated as engineering: each one versioned, tested on a fixed set, measured with *n* stated, and reported with its failures.**
 
+## At a glance
+
+| | |
+|---|---|
+| **Goal** | Treat prompts as engineering: each one versioned, tested on a fixed set, and reported with its failures. |
+| **What was done** | Ten planned entries on one shared test harness: two finished, one in progress. |
+| **Governance** | Synthetic data only, personal data removed before the model, no amounts or approvals decided by it, and no keys in the repo. |
+| **Measurement** | A revised prompt scored 15 of 15 on known requests but no better on unseen ones; a schema made 84 of 84 replies readable. |
+
 ## Why it exists
 
 A prompt that works on the examples someone tried is not evidence of anything. A team that relies on a model needs to know how often it is right, what it does when it is wrong, and whether a change to the prompt made things better or only different. Each entry here takes one prompting problem and answers those questions with a test set, pass marks set before any run, and results that anyone can reproduce.
@@ -27,7 +36,7 @@ A prompt that works on the examples someone tried is not evidence of anything. A
 | 09 | Tool use with a typed schema | planned |
 | 10 | Teaching prompting: a one-page guide for a non-technical team | planned |
 
-Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Each ends with a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
+Ten entries are planned; two are finished and one is in progress. Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Each ends with a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
 
 ## How the entries fit together
 
@@ -39,6 +48,20 @@ So the entries are built as **layers of one pipeline**, not as separate demos. E
 2. **Give each concern to the cheapest layer that handles it reliably.** Fixed rules for money and approvals, a privacy gate before the model, the prompt for judgment, a schema and a checker for format, and a person for whatever fails or is ambiguous. The model is asked to do only what needs judgment.
 3. **Change one layer at a time, then rerun every set, not only that layer's.** Layers interact. Entry 03's schema lowered the model's output tokens on the held-out set (about 1,020 against 1,220 to 1,320 per run) while leaving category accuracy unchanged at 14 of 16. Here the answers held; on a harder task they might not, and only rerunning the accuracy set would show it. Each prompt addition also lengthens the prompt and raises the cost: entry 02's v2 cost more per run than v1.
 4. **Finish with an end-to-end set scored on every check at once.** Per-entry sets show each layer works; a combined set shows they work together. That set is not built yet.
+
+## Lessons learned
+
+What the entries have taught so far, each with the entry that shows it. Lessons are added as entries finish; earlier ones are not rewritten.
+
+1. **A perfect score on the requests a prompt was written from proves little.** Entry 02's revised prompt scored 15 of 15 on its dev set in every run, and no better than the original on 16 requests it had never seen. Only the held-out set showed that two fixes came with two new errors. ([Entry 02](entries/02-intent-classification/))
+2. **Check the measuring tool before the model.** The first calibration run scored 0 of 15 because the scorer, not the model, failed to read replies wrapped in code fences. ([Entry 02](entries/02-intent-classification/), History)
+3. **A check must be seen to fail, and seen to be needed.** With the pass marks switched off, a deliberately broken prompt reported PASS. In entry 04, each check was disabled in turn to confirm that nothing else would catch its fault. ([Entry 02](entries/02-intent-classification/), [entry 04](entries/04-injection-resistance/))
+4. **Small things change answers.** The same prompt with its line breaks collapsed gave a different urgency on one request. ([Entry 02](entries/02-intent-classification/))
+5. **A readable answer is not a right answer.** With the schema, 84 of 84 replies passed the format check, and category accuracy stayed at 14 of 16, exactly as without it. Each concern needs its own test. ([Entry 03](entries/03-structured-output/))
+6. **A one-reply difference is not a result.** 84 against 83 accepted replies cannot rank two approaches, and repeat runs of the same requests are not independent samples. ([Entry 03](entries/03-structured-output/))
+7. **Changing the harness can quietly relabel past results.** A small change altered the recorded fingerprint of every prompt; comparing an unchanged prompt's fingerprint with earlier runs caught it. ([Entry 03](entries/03-structured-output/), History)
+8. **Decide what counts as a failure before the run.** In entry 04, "the model approved it" turned out to be unmeasurable, because the reply has no approval field and a neutral summary uses the same word, so it became a reported observation instead of a pass mark. ([Entry 04](entries/04-injection-resistance/))
+9. *Placeholder: lessons from entry 04's results, to be added when its runs are analyzed.*
 
 ## How the testing works
 
