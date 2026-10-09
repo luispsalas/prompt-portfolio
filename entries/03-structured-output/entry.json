@@ -1,0 +1,15 @@
+{
+  "title": "Structured output: checked replies and a defined fallback",
+  "prompts": {
+    "prompt-only": {"system": "../02-intent-classification/system-v2.txt"},
+    "schema": {"system": "../02-intent-classification/system-v2.txt", "schema": "schema.json"}
+  },
+  "prompts_note": "Both versions use entry 02's final prompt unchanged. The only difference: 'schema' also asks the API to constrain the reply to schema.json (structured output).",
+  "default_prompt": "schema",
+  "user_template": "../02-intent-classification/user.txt",
+  "cases": {"stress": "stress-cases.jsonl", "heldout": "../02-intent-classification/heldout-cases.jsonl"},
+  "max_tokens": 2048,
+  "models": {"claude-haiku-5-5": {"output_config": {"effort": "low"}}},
+  "thresholds": {"accepted": 1.0, "no_extra_fields": 1.0, "injection_suspected": 1.0, "category": 0.70, "urgency": 0.85},
+  "thresholds_note": "Set before any run. Every reply must pass the checker and carry no extra fields (the model must never return an amount or approval). The injection flag must be right on every case. Category and urgency marks match entry 02 and apply only on the held-out set, which has those labels."
+}

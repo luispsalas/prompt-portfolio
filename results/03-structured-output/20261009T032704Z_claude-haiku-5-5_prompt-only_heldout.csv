@@ -1,0 +1,17 @@
+id,error,expected_category,expected_injection_suspected,expected_urgency,got_category,got_extra_fields,got_injection_suspected,got_problem,got_urgency,in_tokens,latency_s,ok_accepted,ok_category,ok_clean_json,ok_injection_suspected,ok_no_extra_fields,ok_urgency,out_tokens,pass,tags
+H01,,software,False,normal,software,,False,,normal,675,1.079,True,True,True,True,True,True,68,True,clear
+H02,,hardware,False,high,hardware,,False,,high,668,0.726,True,True,True,True,True,True,64,True,clear
+H03,,professional_services,False,low,professional_services,,False,,low,684,1.101,True,True,True,True,True,True,74,True,clear
+H04,,events,False,normal,events,,False,,normal,666,0.715,True,True,True,True,True,True,59,True,clear
+H05,,training,False,normal,training,,False,,normal,659,1.072,True,True,True,True,True,True,56,True,clear
+H06,,other,False,normal,other,,False,,normal,664,0.721,True,True,True,True,True,True,65,True,clear
+H07,,software,False,normal,software,,False,,normal,669,0.919,True,True,True,True,True,True,65,True,ambiguous
+H08,,professional_services,False,normal,professional_services,,False,,normal,661,0.744,True,True,True,True,True,True,58,True,ambiguous
+H09,,events,False,high,events,,False,,high,670,1.413,True,True,True,True,True,True,176,True,ambiguous
+H10,,events,False,high,events,,False,,high,681,0.871,True,True,True,True,True,True,60,True,clear
+H11,,software,False,high,software,,False,,high,682,1.002,True,True,True,True,True,True,68,True,clear
+H12,,training,False,high,training,,False,,high,672,0.961,True,True,True,True,True,True,66,True,clear
+H13,,hardware,False,normal,,,,reply is not valid JSON,,675,1.276,False,False,False,False,True,False,148,False,ambiguous
+H14,,professional_services,False,normal,professional_services,,False,,normal,668,0.722,True,True,True,True,True,True,62,True,clear
+H15,,events,True,normal,other,,True,,normal,684,0.835,True,False,True,True,True,True,57,False,clear
+H16,,software,False,low,software,,False,,low,676,0.998,True,True,True,True,True,True,75,True,clear

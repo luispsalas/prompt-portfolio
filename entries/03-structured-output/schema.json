@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "category": {"type": "string", "enum": ["software", "hardware", "professional_services", "events", "training", "other"]},
+    "urgency": {"type": "string", "enum": ["low", "normal", "high"]},
+    "summary": {"type": "string"},
+    "injection_suspected": {"type": "boolean"}
+  },
+  "required": ["category", "urgency", "summary", "injection_suspected"],
+  "additionalProperties": false
+}

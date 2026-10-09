@@ -79,14 +79,22 @@ def run_entry(client, entry_dir, args, spent):
     if args.model not in cfg["models"]:
         print(f"[{entry_dir.name}] skipped: no settings for {args.model}")
         return None, spent
+    # A prompt version is a system-prompt file, or {"system": file, "schema": file} when the
+    # version also asks the API to constrain the reply to a JSON schema (structured output).
+    spec, schema_text = {}, ""
     if args.system_file:
         system_path, prompt_name = Path(args.system_file), "override:" + Path(args.system_file).name
     else:
         prompt_name = args.prompt or cfg.get("default_prompt", "final")
-        system_path = entry_dir / cfg["prompts"][prompt_name]
+        spec = cfg["prompts"][prompt_name]
+        spec = spec if isinstance(spec, dict) else {"system": spec}
+        system_path = entry_dir / spec["system"]
     system = system_path.read_text()
     user_tpl = (entry_dir / cfg["user_template"]).read_text()
-    prompt_sha = hashlib.sha256((system + "\0" + user_tpl).encode()).hexdigest()[:12]
+    if spec.get("schema"):
+        schema_text = (entry_dir / spec["schema"]).read_text()
+    hashed = system + "\0" + user_tpl + ("\0" + schema_text if schema_text else "")  # unchanged when no schema
+    prompt_sha = hashlib.sha256(hashed.encode()).hexdigest()[:12]
     sets = cfg["cases"] if isinstance(cfg["cases"], dict) else {"all": cfg["cases"]}
     set_name = args.set or next(iter(sets))
     if set_name not in sets:
@@ -94,7 +102,11 @@ def run_entry(client, entry_dir, args, spent):
     cases = [json.loads(l) for l in (entry_dir / sets[set_name]).read_text().splitlines() if l.strip()]
     cases = cases[: args.limit] if args.limit else cases
     score = load_scorer(entry_dir)
-    params = cfg["models"][args.model]
+    params = json.loads(json.dumps(cfg["models"][args.model]))  # copy: the schema is merged in below
+    params_label = dict(params)
+    if schema_text:
+        params.setdefault("output_config", {})["format"] = {"type": "json_schema", "schema": json.loads(schema_text)}
+        params_label["schema"] = spec["schema"]
     price_in, price_out = PRICES[args.model]
 
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -154,7 +166,11 @@ def run_entry(client, entry_dir, args, spent):
     tags = sorted({t for r in scored for t in r["tags"].split()})
     by_tag = {t: (sum(r["pass"] for r in scored if t in r["tags"].split()),
                   sum(1 for r in scored if t in r["tags"].split())) for t in tags}
-    short = [f for f, th in cfg.get("thresholds", {}).items() if n == 0 or acc.get(f, 0) / n < th]
+    # Pass marks apply to the fields this set scores (a set without category labels has no
+    # category score). Marks for unscored fields are listed, never silently dropped.
+    thresholds = cfg.get("thresholds", {})
+    not_scored = [f for f in thresholds if f not in acc]
+    short = [f for f, th in thresholds.items() if f in acc and (n == 0 or acc[f] / n < th)]
     complete = errors == 0 and n == len(cases)
     met = complete and not short
 
@@ -167,7 +183,7 @@ def run_entry(client, entry_dir, args, spent):
 
     summary = {
         "run_utc": stamp, "entry": entry_dir.name, "set": set_name, "prompt": prompt_name, "prompt_sha": prompt_sha,
-        "model": args.model, "params": json.dumps(params, sort_keys=True), "n": n, "errors": errors,
+        "model": args.model, "params": json.dumps(params_label, sort_keys=True), "n": n, "errors": errors,
         "cases_passed": f"{sum(r['pass'] for r in scored)}/{n}",
         "fields": "; ".join(f"{f}={acc[f]}/{n}" for f in field_names),
         "observed": "; ".join(f"{o}={sum(bool(r.get('obs_' + o)) for r in scored)}/{n}" for o in obs_names),
@@ -188,6 +204,8 @@ def run_entry(client, entry_dir, args, spent):
 
     print(f"[{entry_dir.name}] {args.model} prompt={prompt_name} ({prompt_sha}) set={set_name}")
     print(f"  cases passed {summary['cases_passed']} | {summary['fields']}")
+    if not_scored:
+        print(f"  pass marks not applicable to this set (field not scored): {', '.join(not_scored)}")
     if obs_names:
         print(f"  observed (not scored): {summary['observed']}")
     if by_tag:

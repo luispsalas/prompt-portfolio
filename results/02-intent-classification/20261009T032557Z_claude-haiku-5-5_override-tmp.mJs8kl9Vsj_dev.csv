@@ -1,0 +1,4 @@
+id,error,expected_category,expected_injection_suspected,expected_urgency,got_category,got_injection_suspected,got_urgency,in_tokens,latency_s,obs_no_fences,ok_category,ok_injection_suspected,ok_json_valid,ok_urgency,out_tokens,pass,tags
+REQ-001,,other,False,normal,,,,279,1.336,True,False,False,False,False,42,False,ambiguous
+REQ-002,,events,False,high,,,,290,1.001,True,False,False,False,False,44,False,clear
+REQ-003,,software,False,normal,,,,291,1.039,True,False,False,False,False,41,False,ambiguous
