@@ -1,6 +1,6 @@
 # Entry 03: Structured output with a checker and a fallback
 
-**Making model replies safe for a program to act on: check every reply before use, send anything that fails to a person, and measure whether letting the API enforce the format is worth its cost.**
+**Making model replies reliably machine-readable through structured output and validation: check every reply before use, send anything that fails to a person, and measure whether letting the API enforce the format is worth its cost.**
 
 `structured output` · `output validation` · `fallback path` · `JSON schema` · `Claude Haiku 5.5`
 
@@ -8,10 +8,10 @@
 
 | | |
 |---|---|
-| **Goal** | Let a program act on model replies safely: use only replies that pass a check, and send everything else to a person. |
+| **Goal** | Make model replies reliably machine-readable: use only replies that pass a check, and send everything else to a person. |
 | **What was done** | Compared a prompt-only JSON instruction with API-enforced structured output, both behind the same checker, including 12 requests built to break the format. |
 | **Governance** | The model can never return an amount or an approval; extra fields are flagged, and every rejected reply goes to a person. |
-| **Measurement** | With the schema, 84 of 84 replies passed the check; prompt-only, 83 of 84, while running faster and cheaper. |
+| **Measurement** | Schema 84 of 84 replies passed, prompt-only 83 of 84: too close to rank them. Prompt-only was faster and cheaper. |
 
 ## Why it matters
 
@@ -24,7 +24,7 @@ So the business requirement is not "the model returns JSON". It is: **nothing do
 - **Synthetic data only.** Every request is invented, and every one was run through the real privacy gate from the original workflow lab before use: none contained personal data to remove.
 - **Every reply is checked before anything uses it.** The checker accepts only the four expected fields with allowed values. A reply that fails goes to a person; it is never repaired or guessed at.
 - **The model cannot decide money or approvals.** It is never shown an amount. The schema forbids any field beyond the four, and the checker flags extra fields, so a reply that tried to add `amount` or `approved` would be visible. Business values always come from the original request, never from the model.
-- **Requests can carry instructions; replies are still data.** Four test requests ask the model to change format, add a field, include an amount or explain itself first. The model must flag those (`injection_suspected`) and not comply.
+- **Requests can carry instructions; this entry checks only the format.** Four stress requests ask the model to change format, add a field, include an amount or explain itself first, because that is a common way a reply gets pulled off format. The flag (`injection_suspected`) is recorded, but four cases cannot measure resistance to injection; entry 04 does.
 - **Raw model replies are not committed.** Only scored results are published; the raw replies stay local.
 - **Every result names its model and prompt version,** including whether the schema was used, and a hash of the prompt and schema text.
 
@@ -32,7 +32,8 @@ So the business requirement is not "the model returns JSON". It is: **nothing do
 
 - **Not production use**, and synthetic requests only.
 - **The stress set did not break this model.** The 12 format-breaking requests were handled correctly by both approaches in every run, so this entry cannot say how often prompt-only fails on hostile input. The one failure it found came from an ordinary, ambiguous request.
-- **Small numbers.** 84 replies per approach; one failure in 84 is a rate this data cannot pin down.
+- **The difference between the approaches is too small to be significant.** 84 against 83 accepted is one reply. The 84 replies are also not independent: they are 28 requests run 3 times each. Even treating them as independent, the 95% upper bound on the failure rate is about 4% for 0 of 84 and about 6% for 1 of 84, so the two ranges almost entirely overlap. What would give a meaningful measure is under Potential improvements.
+- **Format only.** The core of this entry is the checker and the fallback path. Three questions stay outside it on purpose: whether the answers are *right* (entry 02 measures category and urgency; here they are checked only to confirm the schema does not change them), whether the model *resists* injected instructions (entry 04), and whether a request should be *authorized* (fixed rules outside the model; the schema only keeps amounts and approvals out of the reply).
 - **One model.** Older models behave differently: in entry 02, Haiku 4.5 ignored the "no code fences" instruction on all 15 replies.
 - **No retry.** A rejected reply goes straight to a person, as in the original workflow. Retrying once before falling back is a common alternative and is not tested here.
 
@@ -94,9 +95,10 @@ Model `claude-haiku-5-5`, effort `low`, 3 runs per approach per set, so 84 repli
 - **With the schema, that cannot happen.** All 84 replies were clean JSON exactly as returned.
 - **The schema did not change the answers.** Category was 14 of 16 in every run under both approaches.
 - **The schema costs time and tokens.** Replies took about 1.5 s instead of about 0.9 s in every run, not only the first, and each request carried 341 more input tokens. Output tokens on the held-out set were lower with the schema (about 1,020 against 1,220 to 1,320 per run), consistent with less reasoning written out.
-- **The format-breaking requests did not break this model either way.** It did not switch to XML, add a field or include an amount, and flagged all four instruction-carrying requests in every run.
+- **The format-breaking requests did not break this model either way.** It did not switch to XML, add a field or include an amount. (It also set the flag on all four instruction-carrying requests in every run; with four cases, that is a note, not a test of injection resistance.)
+- **The gap between the approaches is one reply** and is not significant (see What it does not show). The one difference that held in every run is cost and latency, not reliability.
 
-**Which to use:** for a workflow where a rejected reply costs a person's time, the schema removes that cost for about 0.6 s and a few hundred tokens per request. Where latency matters more, prompt-only with the checker is safe, because every failure still lands with a person. Either way, the checker is not optional. This repo uses the schema as the default.
+**Which to use:** for a workflow where a rejected reply costs a person's time, the schema removes that cost for about 0.6 s and a few hundred tokens per request. Where latency matters more, prompt-only with the checker is still reliable, because every failure lands with a person. Either way, the checker is not optional. This repo uses the schema as the default.
 
 ## Failure modes and guardrails
 
@@ -107,7 +109,8 @@ Model `claude-haiku-5-5`, effort `low`, 3 runs per approach per set, so 84 repli
 | The reply adds a field such as `amount` | The schema forbids it; the checker flags it; business values never come from the model |
 | The AI call itself fails | The checker records `AI call failed` and the request goes to a person |
 | The checker itself is wrong | 33 fixed cases with stated verdicts, compared against the original implementation, and shown to fail when a check is removed |
-| A request hides an instruction | The model flags it; tested here on 4 requests, 3 runs each. Entry 04 tests injection in depth |
+| A request hides an instruction | Outside this entry's scope. The flag is recorded; entry 04 tests injection resistance |
+| The reply is well-formed but wrong | Outside this entry's scope: the checker confirms format, not meaning. Entry 02 measures accuracy |
 
 ## Reproduce
 
@@ -123,6 +126,16 @@ A full run of one set costs under $0.003.
 ## Related concepts
 
 [Structured output](https://luispsalas.github.io/applied-ai-concepts/concepts/structured-output.html) · [Guardrails](https://luispsalas.github.io/applied-ai-concepts/concepts/guardrails-ai-systems.html) · [Prompt injection](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-injection.html) · [Evaluation](https://luispsalas.github.io/applied-ai-concepts/concepts/evaluation.html) · [System prompt](https://luispsalas.github.io/applied-ai-concepts/concepts/system-prompt.html)
+
+## Potential improvements
+
+None of these has been tested. Each is a hypothesis with the measurement that would settle it.
+
+- **Get a measure that can separate the approaches.** Add distinct requests rather than repeat runs, since repeats of the same request are not independent. With zero failures in about 400 distinct requests, the 95% upper bound on the failure rate falls below 1%. Score both approaches on the same requests and count the requests where only one fails.
+- **Test where prompt-only actually fails.** Neither the stress set nor this model produced a format failure on hostile input. A harder stress set, or a smaller or older model, would show whether the schema's value grows as the model weakens. (Haiku 4.5 ignored the no-fences instruction on 15 of 15 replies in entry 02; the checker strips fences, so those replies still passed.)
+- **Retry once before falling back.** Hypothesis: a single retry recovers most prompt-only rejections at less average delay than the schema adds to every request. Measure the share recovered and the added latency.
+- **Price the fallback in business terms.** A person's minutes per rejected reply, times the rejection rate, against the schema's extra 0.6 s and 341 tokens on every request. That turns "which to use" into a number for a given team.
+- **Cut-offs and refusals with the schema on.** The schema cannot guarantee a reply that is cut off at the token limit or declined. A small set with a low token limit would show that the checker still catches them.
 
 ## How it was built
 

@@ -134,6 +134,17 @@ The harness reads an Anthropic API key from `~/.config/anthropic/prompt-portfoli
 
 [Prompt engineering](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-engineering.html) · [System prompt](https://luispsalas.github.io/applied-ai-concepts/concepts/system-prompt.html) · [Structured output](https://luispsalas.github.io/applied-ai-concepts/concepts/structured-output.html) · [Evaluation](https://luispsalas.github.io/applied-ai-concepts/concepts/evaluation.html) · [Prompt injection](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-injection.html)
 
+## Potential improvements
+
+None of these has been tested. Each is a hypothesis with the measurement that would settle it.
+
+- **v3: fix the two regressions.** Widen the events definition beyond "a venue or a booth" (the orientation-day catering) and keep repairs out of `professional_services` (the laptop repair). This needs a **third, fresh test set** with labels confirmed first: the held-out set has now been seen, and tuning on it would turn it into a second dev set.
+- **Examples instead of more definitions.** Hypothesis: one short example per contested boundary (repair against service, catering against events) fixes ambiguous cases with fewer side effects than widening a definition. Compare against v2 on the same fresh set.
+- **Let ambiguous requests go to a person.** The prompt now forces a category even when a reviewer would hesitate. A `needs_review` option would route the ambiguous ones to a person. Measure how many get routed, and the accuracy on the rest.
+- **A held-out set written by someone else.** The same author wrote v2 and its test. Requests from a second author, or real anonymized requests, would remove that limit.
+- **Check sensitivity to formatting.** Collapsing line breaks changed an answer here. Running the same prompt in a few layouts would show whether that was a one-off or a pattern worth guarding against.
+- **Bigger sets and a confusion table.** With about 16 requests, one answer moves a score by about 6 points. More requests, and a table of which categories get confused with which, would show where definitions still overlap.
+
 ## How it was built
 
 Built with an AI coding assistant (Claude Code). The assistant wrote the harness, the v2 prompt and the held-out requests; I reviewed and confirmed every label before v2 was written, and chose to stop at v2 and publish the mixed result.
