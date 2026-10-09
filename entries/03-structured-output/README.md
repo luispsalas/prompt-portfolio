@@ -112,6 +112,15 @@ Model `claude-haiku-5-5`, effort `low`, 3 runs per approach per set, so 84 repli
 | A request hides an instruction | Outside this entry's scope. The flag is recorded; entry 04 tests injection resistance |
 | The reply is well-formed but wrong | Outside this entry's scope: the checker confirms format, not meaning. Entry 02 measures accuracy |
 
+## Guidance this entry tests
+
+The practices and their sources are kept in one place for the whole portfolio, in [RECOMMENDED-APPROACHES.md](../../RECOMMENDED-APPROACHES.md). What this entry adds to each:
+
+- **[P-02](../../RECOMMENDED-APPROACHES.md#p-02) Define the output format and validate it in code: tested.** The checker was tested on 33 fixed replies, and every rejected reply goes to a person. The schema (84 of 84 accepted) and the prompt-only instruction (83 of 84) were too close to rank.
+- **[P-01](../../RECOMMENDED-APPROACHES.md#p-01) Keep the model's authority small: applied.** The schema forbids any field beyond the four, so a reply cannot carry an amount or an approval.
+- **[P-09](../../RECOMMENDED-APPROACHES.md#p-09) Test adversarially: one round, on the format only.** The 12 stress requests did not break either approach.
+- **[P-07](../../RECOMMENDED-APPROACHES.md#p-07) Set success criteria first: applied.** Pass marks were set before the runs, and one prompt-only run fell below them.
+
 ## Reproduce
 
 ```bash

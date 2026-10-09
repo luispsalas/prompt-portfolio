@@ -121,6 +121,14 @@ Before trusting any score, the harness re-ran the original lab's model (`claude-
 
 Pass marks were set from the original lab's baseline before any Haiku 5.5 run: category at least 0.70, urgency at least 0.85, valid JSON and the injection flag right on every case. The harness has been shown to fail a deliberately broken prompt ([`tests/fault-test.sh`](../../tests/fault-test.sh)).
 
+## Guidance this entry tests
+
+The practices and their sources are kept in one place for the whole portfolio, in [RECOMMENDED-APPROACHES.md](../../RECOMMENDED-APPROACHES.md). What this entry adds to each:
+
+- **[P-06](../../RECOMMENDED-APPROACHES.md#p-06) Write expert judgment as explicit rules, then test them: tested.** v2 added a reviewer's rules, not a persona. On unseen requests the urgency rules generalized (16 of 16 in every run), while the category definitions traded two fixes for two new errors.
+- **[P-07](../../RECOMMENDED-APPROACHES.md#p-07) Set success criteria first, and judge changes on unseen cases: applied.** Pass marks were set before any run, and 15 of 15 on the dev set did not transfer to the held-out set.
+- **[P-01](../../RECOMMENDED-APPROACHES.md#p-01) Keep the model's authority small: applied by design.** The model classifies; amounts and approvals stay with fixed rules.
+
 ## Reproduce
 
 ```bash

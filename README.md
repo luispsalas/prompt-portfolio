@@ -7,7 +7,7 @@
 | | |
 |---|---|
 | **Goal** | Treat prompts as engineering: each one versioned, tested on a fixed set, and reported with its failures. |
-| **What was done** | Ten planned entries on one shared test harness: two finished, one in progress. |
+| **What was done** | Ten planned entries on one shared test harness, three finished so far. |
 | **Governance** | Synthetic data only, personal data removed before the model, no amounts or approvals decided by it, and no keys in the repo. |
 | **Measurement** | A revised prompt scored 15 of 15 on known requests but no better on unseen ones; a schema made 84 of 84 replies readable. |
 
@@ -28,7 +28,7 @@ A prompt that works on the examples someone tried is not evidence of anything. A
 | 01 | Plain-language explanation for a non-technical reader | planned |
 | 02 | [Intent classification](entries/02-intent-classification/): category and urgency, v1 to v2, held-out test | done |
 | 03 | [Structured output](entries/03-structured-output/) with a checker and a fallback path | done |
-| 04 | Injection-resistant system prompt | in progress |
+| 04 | [Injection resistance](entries/04-injection-resistance/): hidden instructions, false alarms, a narrowed v3 | done |
 | 05 | Grounded answer with citations | planned |
 | 06 | A judgment step in a pipeline, against a rubric | planned |
 | 07 | Summary for a human reviewer | planned |
@@ -36,7 +36,7 @@ A prompt that works on the examples someone tried is not evidence of anything. A
 | 09 | Tool use with a typed schema | planned |
 | 10 | Teaching prompting: a one-page guide for a non-technical team | planned |
 
-Ten entries are planned; two are finished and one is in progress. Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Each ends with a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
+Ten entries are planned; three are finished. Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Near the end, each lists the published practices it tests (see Recommended approaches below), then gives a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
 
 ## How the entries fit together
 
@@ -61,7 +61,13 @@ What the entries have taught so far, each with the entry that shows it. Lessons 
 6. **A one-reply difference is not a result.** 84 against 83 accepted replies cannot rank two approaches, and repeat runs of the same requests are not independent samples. ([Entry 03](entries/03-structured-output/))
 7. **Changing the harness can quietly relabel past results.** A small change altered the recorded fingerprint of every prompt; comparing an unchanged prompt's fingerprint with earlier runs caught it. ([Entry 03](entries/03-structured-output/), History)
 8. **Decide what counts as a failure before the run.** In entry 04, "the model approved it" turned out to be unmeasurable, because the reply has no approval field and a neutral summary uses the same word, so it became a reported observation instead of a pass mark. ([Entry 04](entries/04-injection-resistance/))
-9. *Placeholder: lessons from entry 04's results, to be added when its runs are analyzed.*
+9. **A defense can cost more than it buys, and only a false-alarm count shows it.** Entry 04's defensive paragraph stopped nothing extra on this model (no version obeyed any of 216 injection replies), but it flagged harmless requests that used words like "mark" or "ignore". A narrowed version kept every catch and cleared all but one false alarm. ([Entry 04](entries/04-injection-resistance/))
+
+## Recommended approaches
+
+[RECOMMENDED-APPROACHES.md](RECOMMENDED-APPROACHES.md) collects what current published guidance recommends for the problems in this portfolio, each practice cited to its primary source, and says where each entry stands against it. It is kept as one living synthesis: when a new source or a new result disagrees with a practice, the practice is updated and the disagreement recorded, never added as a second opinion. Entries link to its practices by ID and keep their own evidence.
+
+Nine practices so far, in five groups: the model's authority (P-01), output format (P-02), untrusted input (P-03 to P-05), prompt content (P-06) and testing (P-07 to P-09). One records a disagreement: a defensive instruction that published guidance recommends added only false alarms in entry 04, and the file says how that was reconciled. It also has a plain-language summary for a non-technical team, and the events that should trigger a revisit.
 
 ## How the testing works
 
