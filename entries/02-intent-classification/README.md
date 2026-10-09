@@ -134,6 +134,20 @@ The harness reads an Anthropic API key from `~/.config/anthropic/prompt-portfoli
 
 [Prompt engineering](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-engineering.html) · [System prompt](https://luispsalas.github.io/applied-ai-concepts/concepts/system-prompt.html) · [Structured output](https://luispsalas.github.io/applied-ai-concepts/concepts/structured-output.html) · [Evaluation](https://luispsalas.github.io/applied-ai-concepts/concepts/evaluation.html) · [Prompt injection](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-injection.html)
 
+## History
+
+How the entry got here, in order, including the attempts that failed. Every run named below is in [`results/runs.csv`](../../results/runs.csv) or in the build-history files described in [`results/README.md`](../../results/README.md). All runs are dated 2026-10-09 (UTC). New steps are added at the end; earlier ones are not rewritten.
+
+1. **Planned as a few-shot prompt; it was zero-shot.** The original prompt turned out to have no examples, so the entry describes it as zero-shot.
+2. **First calibration measured the scorer, not the model.** Re-running the original lab's model (`claude-haiku-4-5-20251001`) gave 0 of 15 valid replies: the model wrapped every reply in a code fence, and the scorer did not strip fences the way the lab's own parser did. The scorer was fixed to match the parser, then checked against the lab's saved answers, which it scored exactly as published (category 11/15, urgency 14/15).
+3. **Calibration came close but not exact.** Three identical runs gave category 12/15 and urgency 13/15. Using the prompt exactly as the workflow tool saved it, with line breaks collapsed, brought urgency to 14/15. An earlier comparison had ignored whitespace and so reported the two texts as identical. One category difference stayed unexplained.
+4. **Proved the harness can fail.** A prompt deliberately broken to drop JSON scored 0 of 15 and the harness exited with a failure; a $0 spend cap stopped a run as incomplete, not as wrong answers. With the pass-mark check switched off in a copy, the same broken prompt scored 0 of 3 and still reported PASS, which showed the pass marks are what catch it.
+5. **Removing the anti-injection rule changed nothing.** On Haiku 4.5, the injection request was still flagged without the rule. With a single injection case, that says little, which is why entry 04 exists.
+6. **Moved to `claude-haiku-5-5`.** First run on the dev set: 12 of 15 cases, category 13/15, urgency 14/15, and no code fences on 15 of 15 replies, where Haiku 4.5 had fenced all 15.
+7. **Held-out set written and frozen before v2.** 16 new requests; the labels were confirmed by the owner, and the file was frozen, before v2 existed.
+8. **v2 written from the dev-set failures.** Dev set: 15 of 15 in all 3 runs. Held-out set: no net gain; two fixes, two regressions (see Results).
+9. **Decision: stop at v2 and publish the mixed result.** A v3 would need a third, fresh set, because the held-out set has now been seen (see Potential improvements).
+
 ## Potential improvements
 
 None of these has been tested. Each is a hypothesis with the measurement that would settle it.

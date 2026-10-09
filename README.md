@@ -27,7 +27,7 @@ A prompt that works on the examples someone tried is not evidence of anything. A
 | 09 | Tool use with a typed schema | planned |
 | 10 | Teaching prompting: a one-page guide for a non-technical team | planned |
 
-Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Each ends with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
+Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Each ends with a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
 
 ## How the entries fit together
 

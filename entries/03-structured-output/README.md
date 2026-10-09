@@ -127,6 +127,17 @@ A full run of one set costs under $0.003.
 
 [Structured output](https://luispsalas.github.io/applied-ai-concepts/concepts/structured-output.html) · [Guardrails](https://luispsalas.github.io/applied-ai-concepts/concepts/guardrails-ai-systems.html) · [Prompt injection](https://luispsalas.github.io/applied-ai-concepts/concepts/prompt-injection.html) · [Evaluation](https://luispsalas.github.io/applied-ai-concepts/concepts/evaluation.html) · [System prompt](https://luispsalas.github.io/applied-ai-concepts/concepts/system-prompt.html)
 
+## History
+
+How the entry got here, in order, including the attempts that failed. Runs are in [`results/runs.csv`](../../results/runs.csv), dated 2026-10-09 (UTC). New steps are added at the end; earlier ones are not rewritten.
+
+1. **Checker tested before any model.** The 33 fixed cases came out as expected, and the test failed when the urgency check was deliberately removed from the checker. Running the original JavaScript on the same cases gave 31 of 33 identical verdicts and exposed its `null` crash.
+2. **The first harness change relabeled history.** Adding schema support changed the hash recorded for every prompt, so an unchanged prompt would have looked like a new version in the results. Comparing v2's hash with earlier runs caught it. The harness was fixed so a prompt without a schema keeps its old hash, and the two rows written in between were corrected.
+3. **Stress set built.** 12 requests designed to pull the model off format, each run through the real privacy gate first.
+4. **Pass marks set, then the runs.** Prompt-only fell below them once (held-out run 1, 15 of 16 accepted), and the harness reported the failure. The schema met them in every run.
+5. **Decision: the schema is the default.** Confirmed by the owner after the results above.
+6. **Owner review narrowed the claims.** "Safe" became "reliably machine-readable", since a format check does not make a reply safe. The 84 against 83 result is now stated as not significant, with the reason. The entry's scope was narrowed to the checker and the fallback path, with correctness, injection resistance and authorization stated as limits rather than results.
+
 ## Potential improvements
 
 None of these has been tested. Each is a hypothesis with the measurement that would settle it.
