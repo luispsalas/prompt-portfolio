@@ -1,13 +1,20 @@
-# Prompt portfolio
+<p>
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark-left.svg">
+    <img src="assets/banner-light-left.svg" alt="Prompt Portfolio: Prompts versioned, tested and measured" width="760">
+  </picture>
+</p>
 
 **Prompts treated as engineering: each one versioned, tested on a fixed set, measured with *n* stated, and reported with its failures.**
+
+> **A growing project.** New entries are added as they are built and tested; the table below shows each one's status, and every entry marked *done* stands on its own.
 
 ## At a glance
 
 | | |
 |---|---|
 | **Goal** | Treat prompts as engineering: each one versioned, tested on a fixed set, and reported with its failures. |
-| **What was done** | Ten planned entries on one shared test harness, three finished so far. |
+| **What was done** | Planned entries on one shared test harness, published as each is finished; see Entries for status. |
 | **Governance** | Synthetic data only, personal data removed before the model, no amounts or approvals decided by it, and no keys in the repo. |
 | **Measurement** | A revised prompt scored 15 of 15 on known requests but no better on unseen ones; a schema made 84 of 84 replies readable. |
 
@@ -36,7 +43,7 @@ A prompt that works on the examples someone tried is not evidence of anything. A
 | 09 | Tool use with a typed schema | planned |
 | 10 | Teaching prompting: a one-page guide for a non-technical team | planned |
 
-Ten entries are planned; three are finished. Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Near the end, each lists the published practices it tests (see Recommended approaches below), then gives a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
+Each entry README starts with the business case and data governance, then states what the entry does not show, before the method and results. Near the end, each lists the published practices it tests (see Recommended approaches below), then gives a history, in order, of what was tried and what failed along the way, then with potential improvements: hypotheses not yet tested, with the measurement that would settle each.
 
 ## How the entries fit together
 
