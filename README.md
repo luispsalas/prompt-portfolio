@@ -1,8 +1,5 @@
 <p>
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark-left.svg">
-    <img src="assets/banner-light-left.svg" alt="Prompt Portfolio: Prompts versioned, tested and measured" width="760">
-  </picture>
+  <img src="assets/banner.svg" alt="Prompt Portfolio: Prompts versioned, tested and measured" width="760">
 </p>
 
 **Prompts treated as engineering: each one versioned, tested on a fixed set, measured with *n* stated, and reported with its failures.**
